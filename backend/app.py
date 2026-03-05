@@ -26,6 +26,10 @@ def create_app(config_object: type[Config] = Config) -> Flask:
 
     register_blueprints(app)
 
+    @app.route("/")
+    def index():
+        return jsonify({"service": "Task Tracker API", "docs": "Use /api/health, /api/register, /api/login, /api/tasks"}), 200
+
     @app.before_request
     def log_request():
         app.logger.info(

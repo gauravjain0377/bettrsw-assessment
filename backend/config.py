@@ -13,6 +13,12 @@ def _get_database_uri():
             database_url = database_url.replace("postgres://", "postgresql+psycopg://", 1)
         elif database_url.startswith("postgresql://"):
             database_url = database_url.replace("postgresql://", "postgresql+psycopg://", 1)
+        # Remote Postgres (e.g. Render) requires SSL; add sslmode when host is not localhost
+        if "sslmode=" not in database_url and "@" in database_url:
+            # Assume non-localhost (e.g. *.render.com) needs SSL
+            host_part = database_url.split("@")[-1].split("/")[0].split(":")[0]
+            if host_part != "localhost" and "127.0.0.1" not in host_part:
+                database_url += "?sslmode=require" if "?" not in database_url else "&sslmode=require"
         return database_url
 
     # Local dev: use SQLite so you can run without PostgreSQL
