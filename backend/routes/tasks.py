@@ -46,12 +46,24 @@ def update_task(task_id: int):
     task = db.session.get(Task, task_id)
     if not task:
         return jsonify({"error": "Task not found"}), 404
-    if task.created_by != current_user_id and task.assigned_to != current_user_id:
+    is_creator = task.created_by == current_user_id
+    is_assignee = task.assigned_to == current_user_id
+    if not is_creator and not is_assignee:
         return jsonify({"error": "Not allowed"}), 401
 
     data = request.get_json() or {}
     validated = task_update_schema.load(data)
-    task.update_task(**validated)
+
+    # If current user is only the assignee (not creator), they can only change status
+    if is_assignee and not is_creator:
+        allowed = {}
+        if "status" in validated:
+            allowed["status"] = validated["status"]
+        if not allowed:
+            return jsonify({"error": "Nothing to update"}), 400
+        task.update_task(**allowed)
+    else:
+        task.update_task(**validated)
     return jsonify(task_schema.dump(task)), 200
 
 
@@ -62,7 +74,8 @@ def delete_task(task_id: int):
     task = db.session.get(Task, task_id)
     if not task:
         return jsonify({"error": "Task not found"}), 404
-    if task.created_by != current_user_id and task.assigned_to != current_user_id:
+    # Only the creator can delete a task
+    if task.created_by != current_user_id:
         return jsonify({"error": "Not allowed"}), 401
 
     task.delete_task()

@@ -2,7 +2,7 @@ from datetime import datetime
 
 import bcrypt
 from flask_jwt_extended import create_access_token
-from sqlalchemy import Enum
+from sqlalchemy import Enum, or_
 
 from extensions import db
 
@@ -76,7 +76,12 @@ class Task(db.Model):
 
     @classmethod
     def list_tasks(cls, user_id: int, status: str | None = None, assigned_to: str | None = None):
-        query = cls.query
+        # A user can see:
+        # - tasks they created, or
+        # - tasks assigned to them
+        query = cls.query.filter(
+            or_(cls.created_by == user_id, cls.assigned_to == user_id)
+        )
 
         if status:
             query = query.filter_by(status=status)

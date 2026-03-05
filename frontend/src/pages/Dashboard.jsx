@@ -64,6 +64,16 @@ export default function Dashboard({ user }) {
     }
   };
 
+  const handleStatusChange = async (task, newStatus) => {
+    try {
+      await api.put(`/tasks/${task.id}`, { status: newStatus });
+      toast.success("Status updated");
+      await loadTasks({ status: statusFilter, assigned_to: assignedFilter });
+    } catch {
+      // handled globally
+    }
+  };
+
   const handleFilterChange = (e) => {
     const { name, value } = e.target;
     if (name === "statusFilter") {
@@ -145,7 +155,13 @@ export default function Dashboard({ user }) {
           />
         </div>
         <div className="md:col-span-2">
-          <TaskTable tasks={tasks} onEdit={setEditingTask} onDelete={handleDelete} />
+          <TaskTable
+            tasks={tasks}
+            onEdit={setEditingTask}
+            onDelete={handleDelete}
+            currentUser={user}
+            onStatusChange={handleStatusChange}
+          />
         </div>
       </div>
     </div>
