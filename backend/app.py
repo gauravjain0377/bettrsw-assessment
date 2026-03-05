@@ -75,3 +75,7 @@ def configure_logging(app: Flask) -> None:
     file_handler.setFormatter(formatter)
     app.logger.addHandler(file_handler)
 
+
+# WSGI entry point for Gunicorn (use "app:application" in start command)
+application = create_app()
+
