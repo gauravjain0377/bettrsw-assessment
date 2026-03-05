@@ -1,0 +1,38 @@
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+env/
+venv/
+.venv/
+ENV/
+env.bak/
+venv.bak/
+
+# Virtual environment for tests or local tooling
+.env/
+.env.*.local
+
+# VSCode / IDE
+.vscode/
+.idea/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs
+logs/
+*.log
+
+# Byte-compiled / optimized / DLL files
+*.so
+
+# Coverage / test artifacts
+.pytest_cache/
+.coverage
+htmlcov/
+
+.env/
+.env.example
