@@ -22,5 +22,6 @@ pnpm-debug.log*
 Thumbs.db
 
 
-.env/
-.env.example
+.env
+.env.local
+.env.*.local
